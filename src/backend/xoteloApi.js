@@ -32,7 +32,10 @@ async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currenc
     };
     const response = await axios.get(API_URL, { params });
     const data = response.data;
-    if (data.error) return null;
+    if (data.error) {
+      console.error('Xotelo API error:', data.error);
+      return null;
+    }
     const result = data.result || {};
     const rates = result.rates || [];
     // Find the first Booking.com offer
@@ -42,6 +45,7 @@ async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currenc
     priceCache.set(cacheKey, total);
     return total;
   } catch (err) {
+    console.error('Error fetching Booking.com price from Xotelo API:', err);
     return null;
   }
 }

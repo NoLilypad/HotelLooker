@@ -1,7 +1,3 @@
-Naming
-
-Some names are in French, others in English.
-Improvement: Standardize naming to English everywhere.
 
 Organisation des fichiers
 

@@ -101,32 +101,46 @@ async function showPrices(req, res) {
   }
   // For each hotel and each day, get Booking.com price
   const hotels = getHotels();
-  const prices = await Promise.all(hotels.map(async (hotel) => {
-    const row = { name: hotel.name, prices: [] };
-    for (let i = 0; i < days.length; i++) {
-      // checkIn = current day, checkOut = next day
-      const checkInDate = new Date(days[i].date);
-      const checkOutDate = new Date(checkInDate);
-      checkOutDate.setDate(checkInDate.getDate() + 1);
-      const checkInStr = checkInDate.toISOString().slice(0, 10);
-      const checkOutStr = checkOutDate.toISOString().slice(0, 10);
-      const total = await getBookingTotalPrice(
-        hotel.key,
-        checkInStr,
-        checkOutStr,
-        nbAdults,
-        'EUR',
-        1
-      );
-      row.prices.push(total);
-    }
-    return row;
-  }));
+  let prices = [];
+  let error = null;
+  try {
+    prices = await Promise.all(hotels.map(async (hotel) => {
+      const row = { name: hotel.name, prices: [] };
+      for (let i = 0; i < days.length; i++) {
+        // checkIn = current day, checkOut = next day
+        const checkInDate = new Date(days[i].date);
+        const checkOutDate = new Date(checkInDate);
+        checkOutDate.setDate(checkInDate.getDate() + 1);
+        const checkInStr = checkInDate.toISOString().slice(0, 10);
+        const checkOutStr = checkOutDate.toISOString().slice(0, 10);
+        let total = null;
+        try {
+          total = await getBookingTotalPrice(
+            hotel.key,
+            checkInStr,
+            checkOutStr,
+            nbAdults,
+            'EUR',
+            1
+          );
+        } catch (err) {
+          console.error('Error fetching price for hotel', hotel.key, err);
+          total = null;
+        }
+        row.prices.push(total);
+      }
+      return row;
+    }));
+  } catch (err) {
+    console.error('Error fetching hotel prices:', err);
+    error = 'Une erreur est survenue lors de la récupération des prix.';
+  }
   res.render('pricesTable', {
     hotels,
     days,
     prices,
-    nbAdults
+    nbAdults,
+    error
   });
 }
 

@@ -6,13 +6,16 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error"><%= error %></div>
+    <% } %>
     <% 
       // Get Monday and Sunday dates for the displayed week
       const monday = days[0];
       const sunday = days[6];
       function formatDateEn(dateStr) {
         const d = new Date(dateStr);
-        return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
       }
     %>
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1em;">
@@ -43,7 +46,7 @@
                     const formattedDate = `${dd}-${mm}-${yyyy}`;
                 %>
                     <th>
-                        <%= day.label.charAt(0).toUpperCase() + day.label.slice(1) %><br>
+                        <%= new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long' }).charAt(0).toUpperCase() + new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long' }).slice(1) %><br>
                         <span style="font-size:0.9em"><%= formattedDate %></span>
                     </th>
                 <% }); %>
