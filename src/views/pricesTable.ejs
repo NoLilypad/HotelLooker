@@ -6,7 +6,18 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <h1>Prix Booking.com du lundi au dimanche</h1>
+    <% 
+      // Récupère la date du lundi et du dimanche de la semaine affichée
+      const lundi = days[0];
+      const dimanche = days[6];
+      function formatDateFr(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      }
+    %>
+    <h1 style="text-align:center;">
+      Prix Booking.com du <%= formatDateFr(lundi.date) %> au <%= formatDateFr(dimanche.date) %>
+    </h1>
     <h2>Nombre d'adultes : <%= nbAdults %></h2>
     <table>
         <thead>
