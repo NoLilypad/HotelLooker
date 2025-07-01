@@ -5,6 +5,7 @@ const path = require('path');
 
 // Use backend module to get total Booking.com price
 const { getBookingTotalPrice } = require('../backend/xoteloApi');
+const { getWeekDays, getParam } = require('../utils/helpers');
 
 // Utility function to dynamically read hotel list
 function getHotels() {
@@ -26,20 +27,7 @@ function showLogin(req, res, LOGIN_ENABLED) {
 function showForm(req, res) {
   const today = new Date();
   const selected = req.query.start_date || today.toISOString().slice(0, 10);
-  const refDate = new Date(selected);
-  // Find Monday of the week for refDate
-  const day = refDate.getDay();
-  const monday = new Date(refDate);
-  monday.setDate(refDate.getDate() - ((day + 6) % 7));
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    days.push({
-      date: d.toISOString().slice(0, 10),
-      label: d.toLocaleDateString('en-US', { weekday: 'long' })
-    });
-  }
+  const days = getWeekDays(selected, 'fr-FR');
   res.render('form', {
     hotels: getHotels(),
     days,
@@ -71,34 +59,11 @@ function handleLogout(req, res) {
 // Show price table for each hotel and each day of the selected week (7 days)
 async function showPrices(req, res) {
   // Get params from POST (form) or GET (URL)
-  let start_date, adults;
-  if (req.method === 'POST' && req.body && req.body.start_date) {
-    start_date = req.body.start_date;
-    adults = req.body.adults;
-  } else if (req.query && req.query.start_date) {
-    start_date = req.query.start_date;
-    adults = req.query.adults;
-  } else {
-    // fallback: today and 2 adults
-    const today = new Date();
-    start_date = today.toISOString().slice(0, 10);
-    adults = 2;
-  }
+  const today = new Date();
+  const start_date = getParam(req, 'start_date', today.toISOString().slice(0, 10));
+  const adults = getParam(req, 'adults', 2);
   const nbAdults = Math.max(1, Math.min(3, parseInt(adults) || 2));
-  // Compute 7 days of the week (Monday to Sunday) from any date
-  const refDate = new Date(start_date);
-  const day = refDate.getDay();
-  const monday = new Date(refDate);
-  monday.setDate(refDate.getDate() - ((day + 6) % 7));
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    days.push({
-      date: d.toISOString().slice(0, 10),
-      label: d.toLocaleDateString('en-US', { weekday: 'long' })
-    });
-  }
+  const days = getWeekDays(start_date, 'fr-FR');
   // For each hotel and each day, get Booking.com price
   const hotels = getHotels();
   let prices = [];

@@ -5,9 +5,6 @@ Les vues, contrôleurs, backend, etc. sont bien séparés, mais tu pourrais :
 Mettre les utilitaires dans un dossier utils/.
 Mettre la logique de gestion d’hôtels dans un service.
 
-Utilisation de async/await
-
-Les fonctions asynchrones sont bien utilisées, mais il manque parfois la gestion d’erreur (try/catch).
 
 Code dupliqué
 
@@ -22,13 +19,3 @@ Crée une fonction utilitaire pour extraire les paramètres (getParam(req, name,
 Les contrôleurs font à la fois de la logique métier et de la gestion de fichiers. Amélioration :
 Crée un module hotelService.js pour la gestion des hôtels (lecture/écriture JSON, validation).
 Les contrôleurs ne font que la logique de route.
-
-Gestion des erreurs
-
-Les erreurs API ou internes sont silencieusement ignorées ou retournent null.
-Amélioration : Loggue les erreurs côté serveur et affiche un message utilisateur générique.
-
-Gestion des sessions
-
-Le secret de session est codé en dur ('hotel_secret').
-Amélioration : Lis le secret depuis une variable d’environnement (SESSION_SECRET).
