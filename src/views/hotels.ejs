@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Offres Booking.com - Hôtels</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .hotel { margin-bottom: 2em; }
+        .offer { margin-left: 2em; }
+        .notfound { color: #888; }
+        h2 { color: #2a4d8f; }
+    </style>
+</head>
+<body>
+    <h1>Offres Booking.com pour chaque hôtel</h1>
+    <% hotels.forEach(function(hotel) { %>
+        <div class="hotel">
+            <h2><%= hotel.name %></h2>
+            <% if (hotel.error) { %>
+                <div class="notfound">Erreur API : <%= hotel.error %></div>
+            <% } else if (hotel.offers.length === 0) { %>
+                <div class="notfound">Aucune offre Booking.com trouvée.</div>
+            <% } else { %>
+                <% hotel.offers.forEach(function(offer) { %>
+                    <div class="offer">
+                        <strong>OTA :</strong> <%= offer.name %><br>
+                        <strong>Prix de base :</strong> <%= offer.rate %> <%= offer.currency %><br>
+                        <strong>Taxes :</strong> <%= offer.tax %> <%= offer.currency %><br>
+                        <strong>Prix total :</strong> <%= offer.total_price %> <%= offer.currency %><br>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+    <% }); %>
+</body>
+</html>

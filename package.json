@@ -2,8 +2,9 @@
   "name": "hotellooker",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
+    "start": "node src/server.js",
     "dev": "nodemon"
   },
   "repository": {
@@ -17,8 +18,10 @@
   },
   "homepage": "https://github.com/NoLilypad/HotelLooker#readme",
   "dependencies": {
+    "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.0.0",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1"
   },
