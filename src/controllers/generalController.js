@@ -16,7 +16,11 @@ const CHECK_OUT = '2025-07-03';
 
 // Affiche la page de login
 function showLogin(req, res, AUTH_ENABLED) {
-  if (!AUTH_ENABLED || req.session.user) {
+  // Si l'authentification est désactivée, redirige directement vers le formulaire
+  if (!AUTH_ENABLED) {
+    return res.redirect('/prices');
+  }
+  if (req.session.user) {
     return res.redirect('/prices');
   }
   res.render('login', { error: null });
@@ -47,7 +51,11 @@ function showForm(req, res) {
 }
 
 // Gère la soumission du formulaire de login
-function handleLogin(req, res, USERS) {
+function handleLogin(req, res, USERS, AUTH_ENABLED) {
+  // Si l'authentification est désactivée, redirige directement
+  if (!AUTH_ENABLED) {
+    return res.redirect('/prices');
+  }
   const { username, password } = req.body;
   const user = USERS.find(u => u.username === username && u.password === password);
   if (user) {
@@ -87,13 +95,17 @@ async function showPrices(req, res) {
   const prices = await Promise.all(HOTELS.map(async (hotel) => {
     const row = { name: hotel.name, prices: [] };
     for (let i = 0; i < days.length; i++) {
-      const checkIn = days[i].date;
-      const checkOut = new Date(checkIn);
-      checkOut.setDate(checkOut.getDate() + 1);
-      const checkOutStr = checkOut.toISOString().slice(0, 10);
+      // checkIn = jour courant, checkOut = jour suivant
+      const checkInDate = new Date(days[i].date);
+      const checkOutDate = new Date(checkInDate);
+      checkOutDate.setDate(checkInDate.getDate() + 1);
+      const checkInStr = checkInDate.toISOString().slice(0, 10);
+      const checkOutStr = checkOutDate.toISOString().slice(0, 10);
+      // Vérification explicite (debug)
+      // console.log(`Hotel: ${hotel.name}, checkIn: ${checkInStr}, checkOut: ${checkOutStr}`);
       const total = await getBookingTotalPrice(
         hotel.key,
-        checkIn,
+        checkInStr,
         checkOutStr,
         nbAdults,
         'EUR',

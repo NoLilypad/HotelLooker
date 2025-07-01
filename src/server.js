@@ -27,7 +27,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Auth config depuis .env
-const AUTH_ENABLED = process.env.AUTH_ENABLED === 'true';
+const AUTH_ENABLED = String(process.env.AUTH_ENABLED).trim().toLowerCase() === 'true';
 const USERS = (process.env.USERS || '').split(',').map(u => {
   const [username, password] = u.split(':');
   return { username, password };
@@ -42,18 +42,15 @@ function requireAuth(req, res, next) {
 }
 
 
+
 // Page de login
 app.get('/', (req, res) => generalController.showLogin(req, res, AUTH_ENABLED));
-
 // Soumission du formulaire de login
-app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS));
-
+app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS, AUTH_ENABLED));
 // Déconnexion
 app.get('/logout', generalController.handleLogout);
-
 // Formulaire de sélection de semaine et d'adultes
 app.get('/prices', requireAuth, generalController.showForm);
-
 // Affichage du tableau des prix (POST)
 app.post('/prices', requireAuth, generalController.showPrices);
 
