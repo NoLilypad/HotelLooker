@@ -1,6 +1,10 @@
 // Contrôleur général pour la gestion des routes principales
 const axios = require('axios');
 
+// Utilisation du module backend pour obtenir le prix total Booking.com
+const { getBookingTotalPrice } = require('../backend/xoteloApi');
+
+
 // Paramètres fixes (repris de test.py)
 const HOTELS = [
   { name: 'APPOLO', key: 'g187147-d233386' },
@@ -38,40 +42,35 @@ function handleLogout(req, res) {
   });
 }
 
+
 // Affiche les offres Booking.com pour chaque hôtel
 async function showPrices(req, res) {
   const results = await Promise.all(HOTELS.map(async (hotel) => {
     try {
-      const params = {
-        hotel_key: hotel.key,
-        chk_in: CHECK_IN,
-        chk_out: CHECK_OUT,
-        adults: 2,
-        currency: 'EUR',
-        rooms: 1
-      };
-      const response = await axios.get(API_URL, { params });
-      const data = response.data;
-      if (data.error) {
-        return { name: hotel.name, error: data.error, offers: [] };
+      const total = await getBookingTotalPrice(
+        hotel.key,
+        CHECK_IN,
+        CHECK_OUT,
+        2,
+        'EUR',
+        1
+      );
+      if (total === null) {
+        return { name: hotel.name, error: "Aucune offre Booking.com trouvée", offers: [] };
       }
-      const result = data.result || {};
-      const rates = result.rates || [];
-      const currency = result.currency || 'EUR';
-      const offers = rates.filter(o => (o.name || '').toLowerCase().startsWith('booking')).map(o => ({
-        name: o.name,
-        rate: o.rate,
-        tax: o.tax,
-        total_price: (o.rate || 0) + (o.tax || 0),
-        currency
-      }));
-      return { name: hotel.name, error: null, offers };
+      return {
+        name: hotel.name,
+        error: null,
+        offers: [{ name: 'Booking.com', total_price: total, currency: 'EUR' }]
+      };
     } catch (err) {
       return { name: hotel.name, error: 'Erreur réseau ou API', offers: [] };
     }
   }));
   res.render('hotels', { hotels: results });
 }
+
+
 
 module.exports = {
   showLogin,
