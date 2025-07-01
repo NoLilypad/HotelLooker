@@ -12,7 +12,7 @@
             <h1>Recherche de prix Booking.com</h1>
             <form method="POST" action="/prices">
                 <label for="start_date">Semaine</label>
-                <input type="date" id="start_date" name="start_date" value="<%= days[0] %>" required>
+                <input type="date" id="start_date" name="start_date" value="<%= (typeof today !== 'undefined' ? today : (new Date()).toISOString().slice(0,10)) %>" required>
                 <label for="adults">Nombre d'adultes</label>
                 <select id="adults" name="adults">
                     <% for(let i=1; i<=3; i++) { %>
