@@ -6,19 +6,102 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="form-box">
-        <h1>Recherche de prix Booking.com</h1>
-        <form method="POST" action="/prices">
-            <label for="start_date">Semaine</label>
-            <input type="date" id="start_date" name="start_date" value="<%= days[0] %>" required>
-            <label for="adults">Nombre d'adultes</label>
-            <select id="adults" name="adults">
-                <% for(let i=1; i<=3; i++) { %>
-                    <option value="<%= i %>" <%= i === defaultAdults ? 'selected' : '' %>><%= i %></option>
-                <% } %>
-            </select>
-            <button type="submit">Voir les prix</button>
-        </form>
+    <div style="display: flex; flex-direction: row; gap: 1em; justify-content: center; align-items: flex-start; min-height: 90vh;">
+        <!-- Panel gauche : formulaire de recherche/prix -->
+        <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
+            <h1>Recherche de prix Booking.com</h1>
+            <form method="POST" action="/prices">
+                <label for="start_date">Semaine</label>
+                <input type="date" id="start_date" name="start_date" value="<%= days[0] %>" required>
+                <label for="adults">Nombre d'adultes</label>
+                <select id="adults" name="adults">
+                    <% for(let i=1; i<=3; i++) { %>
+                        <option value="<%= i %>" <%= i === defaultAdults ? 'selected' : '' %>><%= i %></option>
+                    <% } %>
+                </select>
+                <button type="submit">Voir les prix</button>
+            </form>
+        </div>
+
+        <!-- Panel droit : gestion des hôtels -->
+        <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
+            <h2>Hôtels suivis</h2>
+            <table style="width:100%; border-collapse:collapse; font-size:0.96em;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:2px 4px; font-weight:600;">Nom</th>
+                        <th style="text-align:left; padding:2px 4px; font-weight:600;">ID Xotelo</th>
+                        <th style="width:1%;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% hotels.forEach(function(hotel, idx) { %>
+                        <tr style="height: 1.2em;">
+                            <td style="padding:1px 4px;"><b><%= hotel.name %></b></td>
+                            <td style="padding:1px 4px;"><code><%= hotel.key %></code></td>
+                            <td style="padding:1px 2px;">
+                                <form method="POST" action="/hotels/delete" style="display:inline;">
+                                    <input type="hidden" name="hotel_idx" value="<%= idx %>">
+                                    <button type="submit" style="background:#b00;color:#fff;padding:0.10em 0.5em;border:none;border-radius:4px;cursor:pointer;font-size:0.93em;">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+
+            <h2>Ajouter un hôtel</h2>
+            <form method="POST" action="/hotels/add" style="margin-bottom:2em;">
+                <label for="hotel_name">Nom</label>
+                <input type="text" id="hotel_name" name="hotel_name" required>
+                <label for="hotel_url">URL Tripadvisor</label>
+                <input type="text" id="hotel_url" name="hotel_url" required placeholder="Coller l'URL Tripadvisor">
+                <input type="hidden" id="hotel_key" name="hotel_key">
+                <button type="submit">Ajouter l'hôtel</button>
+            </form>
+            <script>
+            // Fonction JS pour extraire l'ID Tripadvisor depuis l'URL
+            function extractTripadvisorHotelKey(url) {
+              if (!url || url.trim() === "") {
+                return null;
+              }
+              const re1 = /Hotel_Review-/g;
+              const re2 = /-Reviews/g;
+              const match1 = re1.exec(url);
+              const match2 = re2.exec(url);
+              if (!match1 || !match2) {
+                return null;
+              }
+              return url.substring(match1.index + 13, match2.index);
+            }
+            // Remplit automatiquement le champ caché hotel_key lors de la saisie de l'URL
+            document.addEventListener('DOMContentLoaded', function() {
+              var urlInput = document.getElementById('hotel_url');
+              var keyInput = document.getElementById('hotel_key');
+              urlInput.addEventListener('input', function() {
+                var key = extractTripadvisorHotelKey(urlInput.value);
+                keyInput.value = key || '';
+                if (!key && urlInput.value.length > 0) {
+                  urlInput.style.borderColor = '#b00';
+                } else {
+                  urlInput.style.borderColor = '';
+                }
+              });
+              // Validation à la soumission
+              urlInput.form.addEventListener('submit', function(e) {
+                var key = extractTripadvisorHotelKey(urlInput.value);
+                if (!key) {
+                  e.preventDefault();
+                  urlInput.style.borderColor = '#b00';
+                  alert("URL Tripadvisor invalide : impossible d'extraire l'ID hôtel.");
+                } else {
+                  keyInput.value = key;
+                }
+              });
+            });
+            </script>
+            </form>
+        </div>
     </div>
 </body>
 </html>

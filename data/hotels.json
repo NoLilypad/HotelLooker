@@ -1,6 +1,18 @@
 [
-  { "name": "APPOLO", "key": "g187147-d233386" },
-  { "name": "MOULIN", "key": "g187147-d228845" },
-  { "name": "FROCHOT", "key": "g187147-d233570" },
-  { "name": "JOKE", "key": "g187147-d287896" }
+  {
+    "name": "MOULIN",
+    "key": "g187147-d228845"
+  },
+  {
+    "name": "JOKE",
+    "key": "g187147-d287896"
+  },
+  {
+    "name": "Appolo Opera Hotel",
+    "key": "g187147-d233386"
+  },
+  {
+    "name": "Hotel Saint Louis Pigalle",
+    "key": "g187147-d9604050"
+  }
 ]

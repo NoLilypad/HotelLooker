@@ -4,7 +4,8 @@ const axios = require('axios');
 const NodeCache = require('node-cache');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const API_URL = process.env.XOTELO_API_URL || 'https://data.xotelo.com/api/rates';
-const priceCache = new NodeCache({ stdTTL: 600 }); // 10 min TTL
+const CACHE_TTL = parseInt(process.env.CACHE_TTL, 10) || 600;
+const priceCache = new NodeCache({ stdTTL: CACHE_TTL });
 
 /**
  * Récupère le prix total Booking.com pour un hôtel donné, des dates et un nombre de personnes

@@ -7,6 +7,7 @@ dotenv.config({ path: envPath });
 const express = require('express');
 const session = require('express-session');
 const generalController = require('./controllers/generalController');
+const hotelController = require('./controllers/hotelController');
 
 const app = express();
 const PORT = 3000;
@@ -53,6 +54,10 @@ app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS, 
 app.get('/logout', generalController.handleLogout);
 // Formulaire de sélection de semaine et d'adultes
 app.get('/prices', requireAuth, generalController.showForm);
+// Ajout d'un hôtel
+app.post('/hotels/add', requireAuth, hotelController.addHotel);
+// Suppression d'un hôtel
+app.post('/hotels/delete', requireAuth, hotelController.deleteHotel);
 // Affichage du tableau des prix (POST)
 app.post('/prices', requireAuth, generalController.showPrices);
 

@@ -8,8 +8,10 @@ const { getBookingTotalPrice } = require('../backend/xoteloApi');
 
 
 
-// Lecture des hôtels depuis le fichier JSON
-const HOTELS = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/hotels.json'), 'utf-8'));
+// Fonction utilitaire pour lire dynamiquement la liste des hôtels
+function getHotels() {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/hotels.json'), 'utf-8'));
+}
 
 
 // Affiche la page de login
@@ -45,7 +47,7 @@ function showForm(req, res) {
     });
   }
   res.render('form', {
-    hotels: HOTELS,
+    hotels: getHotels(),
     days,
     defaultAdults: 2
   });
@@ -97,7 +99,8 @@ async function showPrices(req, res) {
     });
   }
   // Pour chaque hôtel et chaque jour, récupère le prix Booking.com
-  const prices = await Promise.all(HOTELS.map(async (hotel) => {
+  const hotels = getHotels();
+  const prices = await Promise.all(hotels.map(async (hotel) => {
     const row = { name: hotel.name, prices: [] };
     for (let i = 0; i < days.length; i++) {
       // checkIn = jour courant, checkOut = jour suivant
@@ -119,12 +122,15 @@ async function showPrices(req, res) {
     return row;
   }));
   res.render('pricesTable', {
-    hotels: HOTELS,
+    hotels,
     days,
     prices,
     nbAdults
   });
 }
+
+
+
 
 
 
