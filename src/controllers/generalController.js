@@ -81,8 +81,20 @@ function handleLogout(req, res) {
 
 // Affiche le tableau des prix pour chaque hôtel et chaque jour de la semaine sélectionnée (7 jours)
 async function showPrices(req, res) {
-  // Récupère les paramètres du formulaire
-  const { start_date, adults } = req.body;
+  // Récupère les paramètres du formulaire (POST) ou de l'URL (GET)
+  let start_date, adults;
+  if (req.method === 'POST' && req.body && req.body.start_date) {
+    start_date = req.body.start_date;
+    adults = req.body.adults;
+  } else if (req.query && req.query.start_date) {
+    start_date = req.query.start_date;
+    adults = req.query.adults;
+  } else {
+    // fallback : aujourd'hui et 2 adultes
+    const today = new Date();
+    start_date = today.toISOString().slice(0, 10);
+    adults = 2;
+  }
   const nbAdults = Math.max(1, Math.min(3, parseInt(adults) || 2));
   // Calcule les 7 jours de la semaine (lundi à dimanche) à partir de n'importe quelle date
   const refDate = new Date(start_date);

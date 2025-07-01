@@ -52,8 +52,14 @@ app.get('/', (req, res) => generalController.showLogin(req, res, LOGIN_ENABLED))
 app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS, LOGIN_ENABLED));
 // Déconnexion
 app.get('/logout', generalController.handleLogout);
-// Formulaire de sélection de semaine et d'adultes
-app.get('/prices', requireAuth, generalController.showForm);
+// Affichage du tableau des prix (GET si paramètres, sinon formulaire)
+app.get('/prices', requireAuth, (req, res) => {
+  if (req.query.start_date && req.query.adults) {
+    return generalController.showPrices(req, res);
+  } else {
+    return generalController.showForm(req, res);
+  }
+});
 // Ajout d'un hôtel
 app.post('/hotels/add', requireAuth, hotelController.addHotel);
 // Suppression d'un hôtel
