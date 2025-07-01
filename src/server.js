@@ -23,6 +23,8 @@ app.use(session({
 // Configuration du moteur de template EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+// Servir les fichiers statiques (CSS)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Auth config depuis .env
 const AUTH_ENABLED = process.env.AUTH_ENABLED === 'true';

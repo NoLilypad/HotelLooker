@@ -1,0 +1,99 @@
+
+/* ---- Layout ---- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 2em;
+    background: #f9f9fb;
+}
+
+/* ---- Table ---- */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 2em;
+    background: #fff;
+    box-shadow: 0 2px 8px #0001;
+}
+th, td {
+    border: 1px solid #aaa;
+    padding: 0.7em 1em;
+    text-align: center;
+}
+th {
+    background: #2a4d8f;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+tr:nth-child(even) {
+    background: #f4f4f4;
+}
+
+/* ---- Messages et liens ---- */
+.notfound {
+    color: #b00;
+    font-weight: bold;
+}
+.back {
+    margin-top: 2em;
+    display: block;
+    color: #2a4d8f;
+    text-decoration: none;
+    font-weight: 500;
+}
+.back:hover {
+    text-decoration: underline;
+}
+
+/* ---- Formulaires ---- */
+.form-box, .login-box {
+    max-width: 400px;
+    margin: 2em auto;
+    border: 1px solid #ccc;
+    padding: 2em;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px #0001;
+}
+.login-box { max-width: 350px; }
+h1 {
+    text-align: center;
+    color: #2a4d8f;
+    margin-bottom: 1em;
+}
+label {
+    display: block;
+    margin-top: 1em;
+    font-weight: 500;
+}
+input, select {
+    width: 100%;
+    padding: 0.5em;
+    margin-top: 0.2em;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: #fafbfc;
+    font-size: 1em;
+}
+button {
+    margin-top: 1.5em;
+    width: 100%;
+    padding: 0.7em;
+    background: #2a4d8f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+button:hover {
+    background: #18305e;
+}
+.error {
+    color: #b00;
+    margin-bottom: 1em;
+    text-align: center;
+    font-weight: bold;
+}
