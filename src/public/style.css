@@ -61,6 +61,12 @@ h1 {
     color: #2a4d8f;
     margin-bottom: 1em;
 }
+h2 {
+    text-align: center;
+    color: #000000;
+    margin-bottom: 1em;
+}
+
 label {
     display: block;
     margin-top: 1em;

@@ -1,8 +1,10 @@
 // Module pour interroger l'API Xotelo et obtenir le prix total Booking.com pour un hôtel donné
-const axios = require('axios');
 
+const axios = require('axios');
+const NodeCache = require('node-cache');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const API_URL = process.env.XOTELO_API_URL || 'https://data.xotelo.com/api/rates';
+const priceCache = new NodeCache({ stdTTL: 600 }); // 10 min TTL
 
 /**
  * Récupère le prix total Booking.com pour un hôtel donné, des dates et un nombre de personnes
@@ -15,6 +17,9 @@ const API_URL = process.env.XOTELO_API_URL || 'https://data.xotelo.com/api/rates
  * @returns {Promise<number|null>} Prix total Booking.com ou null si non trouvé
  */
 async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currency = 'EUR', rooms = 1) {
+  const cacheKey = `${hotelKey}_${checkIn}_${checkOut}_${adults}_${currency}_${rooms}`;
+  const cached = priceCache.get(cacheKey);
+  if (cached !== undefined) return cached;
   try {
     const params = {
       hotel_key: hotelKey,
@@ -32,7 +37,9 @@ async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currenc
     // Cherche la première offre Booking.com
     const offer = rates.find(o => (o.name || '').toLowerCase().startsWith('booking'));
     if (!offer) return null;
-    return (offer.rate || 0) + (offer.tax || 0);
+    const total = (offer.rate || 0) + (offer.tax || 0);
+    priceCache.set(cacheKey, total);
+    return total;
   } catch (err) {
     return null;
   }
