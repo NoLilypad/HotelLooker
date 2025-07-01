@@ -2,12 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Choix de la semaine et du nombre d'adultes</title>
+    <title>Choose week and number of adults</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <div style="display: flex; flex-direction: row; gap: 1em; justify-content: center; align-items: flex-start; min-height: 90vh;">
-        <!-- Panel gauche : formulaire de recherche/prix -->
+        <!-- Left panel: search/price form -->
         <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
             <h1>Recherche de prix Booking.com</h1>
             <form method="POST" action="/prices">
@@ -23,7 +23,7 @@
             </form>
         </div>
 
-        <!-- Panel droit : gestion des hôtels -->
+        <!-- Right panel: hotel management -->
         <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
             <h2>Hôtels suivis</h2>
             <table style="width:100%; border-collapse:collapse; font-size:0.96em;">
@@ -50,14 +50,14 @@
                 </tbody>
             </table>
 
-            <h2>Ajouter un hôtel</h2>
+            <h2>Add a hotel</h2>
             <form method="POST" action="/hotels/add" style="margin-bottom:2em;">
-                <label for="hotel_name">Nom</label>
+                <label for="hotel_name">Name</label>
                 <input type="text" id="hotel_name" name="hotel_name" required>
-                <label for="hotel_url">URL Tripadvisor</label>
+                <label for="hotel_url">Tripadvisor URL</label>
                 <input type="text" id="hotel_url" name="hotel_url" required placeholder="Coller l'URL Tripadvisor">
                 <input type="hidden" id="hotel_key" name="hotel_key">
-                <button type="submit">Ajouter l'hôtel</button>
+                <button type="submit">Add hotel</button>
             </form>
             <script>
             // Fonction JS pour extraire l'ID Tripadvisor depuis l'URL

@@ -1,22 +1,18 @@
-// Contrôleur général pour la gestion des routes principales
+// Main controller for core routes
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-// Utilisation du module backend pour obtenir le prix total Booking.com
+// Use backend module to get total Booking.com price
 const { getBookingTotalPrice } = require('../backend/xoteloApi');
 
-
-
-// Fonction utilitaire pour lire dynamiquement la liste des hôtels
+// Utility function to dynamically read hotel list
 function getHotels() {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/hotels.json'), 'utf-8'));
 }
 
-
-// Affiche la page de login
+// Show login page
 function showLogin(req, res, LOGIN_ENABLED) {
-  // Si l'authentification est désactivée, redirige directement vers le formulaire
   if (!LOGIN_ENABLED) {
     return res.redirect('/prices');
   }
@@ -26,15 +22,13 @@ function showLogin(req, res, LOGIN_ENABLED) {
   res.render('login', { error: null });
 }
 
-// Affiche le formulaire de sélection de semaine et d'adultes
+// Show week/adult selection form
 function showForm(req, res) {
-  // Par défaut, semaine courante (lundi à dimanche) mais la date peut être n'importe quel jour
   const today = new Date();
   const selected = req.query.start_date || today.toISOString().slice(0, 10);
   const refDate = new Date(selected);
-  // Trouver le lundi de la semaine de refDate
+  // Find Monday of the week for refDate
   const day = refDate.getDay();
-  // 0 = dimanche, 1 = lundi, ...
   const monday = new Date(refDate);
   monday.setDate(refDate.getDate() - ((day + 6) % 7));
   const days = [];
@@ -43,7 +37,7 @@ function showForm(req, res) {
     d.setDate(monday.getDate() + i);
     days.push({
       date: d.toISOString().slice(0, 10),
-      label: d.toLocaleDateString('fr-FR', { weekday: 'long' })
+      label: d.toLocaleDateString('en-US', { weekday: 'long' })
     });
   }
   res.render('form', {
@@ -53,9 +47,8 @@ function showForm(req, res) {
   });
 }
 
-// Gère la soumission du formulaire de login
+// Handle login form submission
 function handleLogin(req, res, USERS, LOGIN_ENABLED) {
-  // Si l'authentification est désactivée, redirige directement
   if (!LOGIN_ENABLED) {
     return res.redirect('/prices');
   }
@@ -65,23 +58,19 @@ function handleLogin(req, res, USERS, LOGIN_ENABLED) {
     req.session.user = user.username;
     return res.redirect('/prices');
   }
-  res.render('login', { error: 'Identifiants invalides' });
+  res.render('login', { error: 'Invalid credentials' });
 }
 
-// Déconnecte l'utilisateur
+// Logout user
 function handleLogout(req, res) {
   req.session.destroy(() => {
     res.redirect('/');
   });
 }
 
-
-
-
-
-// Affiche le tableau des prix pour chaque hôtel et chaque jour de la semaine sélectionnée (7 jours)
+// Show price table for each hotel and each day of the selected week (7 days)
 async function showPrices(req, res) {
-  // Récupère les paramètres du formulaire (POST) ou de l'URL (GET)
+  // Get params from POST (form) or GET (URL)
   let start_date, adults;
   if (req.method === 'POST' && req.body && req.body.start_date) {
     start_date = req.body.start_date;
@@ -90,13 +79,13 @@ async function showPrices(req, res) {
     start_date = req.query.start_date;
     adults = req.query.adults;
   } else {
-    // fallback : aujourd'hui et 2 adultes
+    // fallback: today and 2 adults
     const today = new Date();
     start_date = today.toISOString().slice(0, 10);
     adults = 2;
   }
   const nbAdults = Math.max(1, Math.min(3, parseInt(adults) || 2));
-  // Calcule les 7 jours de la semaine (lundi à dimanche) à partir de n'importe quelle date
+  // Compute 7 days of the week (Monday to Sunday) from any date
   const refDate = new Date(start_date);
   const day = refDate.getDay();
   const monday = new Date(refDate);
@@ -107,15 +96,15 @@ async function showPrices(req, res) {
     d.setDate(monday.getDate() + i);
     days.push({
       date: d.toISOString().slice(0, 10),
-      label: d.toLocaleDateString('fr-FR', { weekday: 'long' })
+      label: d.toLocaleDateString('en-US', { weekday: 'long' })
     });
   }
-  // Pour chaque hôtel et chaque jour, récupère le prix Booking.com
+  // For each hotel and each day, get Booking.com price
   const hotels = getHotels();
   const prices = await Promise.all(hotels.map(async (hotel) => {
     const row = { name: hotel.name, prices: [] };
     for (let i = 0; i < days.length; i++) {
-      // checkIn = jour courant, checkOut = jour suivant
+      // checkIn = current day, checkOut = next day
       const checkInDate = new Date(days[i].date);
       const checkOutDate = new Date(checkInDate);
       checkOutDate.setDate(checkInDate.getDate() + 1);
@@ -140,11 +129,6 @@ async function showPrices(req, res) {
     nbAdults
   });
 }
-
-
-
-
-
 
 module.exports = {
   showLogin,

@@ -7,25 +7,25 @@
 </head>
 <body>
     <% 
-      // Récupère la date du lundi et du dimanche de la semaine affichée
-      const lundi = days[0];
-      const dimanche = days[6];
-      function formatDateFr(dateStr) {
+      // Get Monday and Sunday dates for the displayed week
+      const monday = days[0];
+      const sunday = days[6];
+      function formatDateEn(dateStr) {
         const d = new Date(dateStr);
-        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
       }
     %>
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1em;">
       <form method="GET" action="/prices" style="margin:0;">
-        <input type="hidden" name="start_date" value="<%= (() => { let d=new Date(lundi.date); d.setDate(d.getDate()-7); return d.toISOString().slice(0,10); })() %>">
+        <input type="hidden" name="start_date" value="<%= (() => { let d=new Date(monday.date); d.setDate(d.getDate()-7); return d.toISOString().slice(0,10); })() %>">
         <input type="hidden" name="adults" value="<%= nbAdults %>">
         <button type="submit" title="Semaine précédente" style="font-size:2em; background:none; border:none; cursor:pointer; color:#1976d2;">&#8592;</button>
       </form>
       <h1 style="margin:0; font-size:1.5em; text-align:center; flex:1;">
-        Prix Booking.com du <%= formatDateFr(lundi.date) %> au <%= formatDateFr(dimanche.date) %>
+        Prix Booking.com du <%= formatDateEn(monday.date) %> au <%= formatDateEn(sunday.date) %>
       </h1>
       <form method="GET" action="/prices" style="margin:0;">
-        <input type="hidden" name="start_date" value="<%= (() => { let d=new Date(lundi.date); d.setDate(d.getDate()+7); return d.toISOString().slice(0,10); })() %>">
+        <input type="hidden" name="start_date" value="<%= (() => { let d=new Date(monday.date); d.setDate(d.getDate()+7); return d.toISOString().slice(0,10); })() %>">
         <input type="hidden" name="adults" value="<%= nbAdults %>">
         <button type="submit" title="Semaine suivante" style="font-size:2em; background:none; border:none; cursor:pointer; color:#1976d2;">&#8594;</button>
       </form>
@@ -36,7 +36,6 @@
             <tr>
                 <th>Hôtel</th>
                 <% days.forEach(function(day) { 
-                    // Format date as dd-mm-aaaa
                     const dateObj = new Date(day.date);
                     const dd = String(dateObj.getDate()).padStart(2, '0');
                     const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -67,6 +66,6 @@
             <% }); %>
         </tbody>
     </table>
-    <a href="/prices" class="back">&#8592; Nouvelle recherche</a>
+    <a href="/prices" class="back">&#8592; New search</a>
 </body>
 </html>

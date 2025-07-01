@@ -1,4 +1,4 @@
-// Module pour interroger l'API Xotelo et obtenir le prix total Booking.com pour un hôtel donné
+// Module to query the Xotelo API and get the total Booking.com price for a given hotel
 
 const axios = require('axios');
 const NodeCache = require('node-cache');
@@ -8,14 +8,14 @@ const CACHE_TTL = parseInt(process.env.CACHE_TTL, 10) || 600;
 const priceCache = new NodeCache({ stdTTL: CACHE_TTL });
 
 /**
- * Récupère le prix total Booking.com pour un hôtel donné, des dates et un nombre de personnes
- * @param {string} hotelKey - L'identifiant de l'hôtel
- * @param {string} checkIn - Date d'arrivée (YYYY-MM-DD)
- * @param {string} checkOut - Date de départ (YYYY-MM-DD)
- * @param {number} adults - Nombre d'adultes
- * @param {string} [currency='EUR'] - Devise
- * @param {number} [rooms=1] - Nombre de chambres
- * @returns {Promise<number|null>} Prix total Booking.com ou null si non trouvé
+ * Get the total Booking.com price for a given hotel, dates, and number of adults
+ * @param {string} hotelKey - Hotel identifier
+ * @param {string} checkIn - Check-in date (YYYY-MM-DD)
+ * @param {string} checkOut - Check-out date (YYYY-MM-DD)
+ * @param {number} adults - Number of adults
+ * @param {string} [currency='EUR'] - Currency
+ * @param {number} [rooms=1] - Number of rooms
+ * @returns {Promise<number|null>} Total Booking.com price or null if not found
  */
 async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currency = 'EUR', rooms = 1) {
   const cacheKey = `${hotelKey}_${checkIn}_${checkOut}_${adults}_${currency}_${rooms}`;
@@ -35,7 +35,7 @@ async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currenc
     if (data.error) return null;
     const result = data.result || {};
     const rates = result.rates || [];
-    // Cherche la première offre Booking.com
+    // Find the first Booking.com offer
     const offer = rates.find(o => (o.name || '').toLowerCase().startsWith('booking'));
     if (!offer) return null;
     const total = (offer.rate || 0) + (offer.tax || 0);
