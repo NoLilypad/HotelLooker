@@ -1,20 +1,17 @@
 // Contrôleur général pour la gestion des routes principales
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 // Utilisation du module backend pour obtenir le prix total Booking.com
 const { getBookingTotalPrice } = require('../backend/xoteloApi');
 
 
-// Paramètres fixes (repris de test.py)
-const HOTELS = [
-  { name: 'APPOLO', key: 'g187147-d233386' },
-  { name: 'MOULIN', key: 'g187147-d228845' },
-  { name: 'FROCHOT', key: 'g187147-d233570' },
-  { name: 'JOKE', key: 'g187147-d287896' }
-];
+
+// Lecture des hôtels depuis le fichier JSON
+const HOTELS = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/hotels.json'), 'utf-8'));
 const CHECK_IN = '2025-07-02';
 const CHECK_OUT = '2025-07-03';
-const API_URL = 'https://data.xotelo.com/api/rates';
 
 // Affiche la page de login
 function showLogin(req, res, AUTH_ENABLED) {
