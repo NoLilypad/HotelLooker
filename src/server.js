@@ -39,6 +39,7 @@ function requireAuth(req, res, next) {
   res.redirect('/');
 }
 
+
 // Page de login
 app.get('/', (req, res) => generalController.showLogin(req, res, AUTH_ENABLED));
 
@@ -48,8 +49,11 @@ app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS))
 // Déconnexion
 app.get('/logout', generalController.handleLogout);
 
-// Route protégée : affiche les offres Booking.com pour chaque hôtel
-app.get('/prices', requireAuth, generalController.showPrices);
+// Formulaire de sélection de semaine et d'adultes
+app.get('/prices', requireAuth, generalController.showForm);
+
+// Affichage du tableau des prix (POST)
+app.post('/prices', requireAuth, generalController.showPrices);
 
 // Démarrage du serveur
 app.listen(PORT, () => {

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Choix de la semaine et du nombre d'adultes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .form-box { max-width: 400px; margin: 2em auto; border: 1px solid #ccc; padding: 2em; border-radius: 8px; }
+        h1 { text-align: center; color: #2a4d8f; }
+        label { display: block; margin-top: 1em; }
+        input, select { width: 100%; padding: 0.5em; margin-top: 0.2em; }
+        button { margin-top: 1.5em; width: 100%; padding: 0.7em; background: #2a4d8f; color: #fff; border: none; border-radius: 4px; font-size: 1em; }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h1>Recherche de prix Booking.com</h1>
+        <form method="POST" action="/prices">
+            <label for="start_date">Semaine (date du lundi)</label>
+            <input type="date" id="start_date" name="start_date" value="<%= days[0] %>" required>
+            <label for="adults">Nombre d'adultes</label>
+            <select id="adults" name="adults">
+                <% for(let i=1; i<=3; i++) { %>
+                    <option value="<%= i %>" <%= i === defaultAdults ? 'selected' : '' %>><%= i %></option>
+                <% } %>
+            </select>
+            <button type="submit">Voir les prix</button>
+        </form>
+    </div>
+</body>
+</html>

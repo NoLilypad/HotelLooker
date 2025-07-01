@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau des prix Booking.com</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        table { border-collapse: collapse; width: 100%; margin-top: 2em; }
+        th, td { border: 1px solid #aaa; padding: 0.7em 1em; text-align: center; }
+        th { background: #2a4d8f; color: #fff; }
+        tr:nth-child(even) { background: #f4f4f4; }
+        .notfound { color: #b00; }
+        .back { margin-top: 2em; display: block; }
+    </style>
+</head>
+<body>
+    <h1>Prix Booking.com du lundi au vendredi</h1>
+    <p>Nombre d'adultes : <%= nbAdults %></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Hôtel</th>
+                <% days.forEach(function(day) { 
+                    // Format date as dd-mm-aaaa
+                    const dateObj = new Date(day.date);
+                    const dd = String(dateObj.getDate()).padStart(2, '0');
+                    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const yyyy = dateObj.getFullYear();
+                    const formattedDate = `${dd}-${mm}-${yyyy}`;
+                %>
+                    <th>
+                        <%= day.label.charAt(0).toUpperCase() + day.label.slice(1) %><br>
+                        <span style="font-size:0.9em"><%= formattedDate %></span>
+                    </th>
+                <% }); %>
+            </tr>
+        </thead>
+        <tbody>
+            <% prices.forEach(function(row) { %>
+                <tr>
+                    <td><%= row.name %></td>
+                    <% row.prices.forEach(function(price) { %>
+                        <td>
+                            <% if (price === null) { %>
+                                <span class="notfound">-</span>
+                            <% } else { %>
+                                <%= price %> €
+                            <% } %>
+                        </td>
+                    <% }); %>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <a href="/prices" class="back">&#8592; Nouvelle recherche</a>
+</body>
+</html>
