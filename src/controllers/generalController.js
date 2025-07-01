@@ -26,12 +26,15 @@ function showLogin(req, res, LOGIN_ENABLED) {
 
 // Affiche le formulaire de sélection de semaine et d'adultes
 function showForm(req, res) {
-  // Par défaut, semaine courante (lundi à dimanche)
+  // Par défaut, semaine courante (lundi à dimanche) mais la date peut être n'importe quel jour
   const today = new Date();
-  const day = today.getDay();
+  const selected = req.query.start_date || today.toISOString().slice(0, 10);
+  const refDate = new Date(selected);
+  // Trouver le lundi de la semaine de refDate
+  const day = refDate.getDay();
   // 0 = dimanche, 1 = lundi, ...
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((day + 6) % 7));
+  const monday = new Date(refDate);
+  monday.setDate(refDate.getDate() - ((day + 6) % 7));
   const days = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
@@ -73,13 +76,17 @@ function handleLogout(req, res) {
 
 
 
+
 // Affiche le tableau des prix pour chaque hôtel et chaque jour de la semaine sélectionnée (7 jours)
 async function showPrices(req, res) {
   // Récupère les paramètres du formulaire
   const { start_date, adults } = req.body;
   const nbAdults = Math.max(1, Math.min(3, parseInt(adults) || 2));
-  // Calcule les 7 jours de la semaine (lundi à dimanche)
-  const monday = new Date(start_date);
+  // Calcule les 7 jours de la semaine (lundi à dimanche) à partir de n'importe quelle date
+  const refDate = new Date(start_date);
+  const day = refDate.getDay();
+  const monday = new Date(refDate);
+  monday.setDate(refDate.getDate() - ((day + 6) % 7));
   const days = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
@@ -99,8 +106,6 @@ async function showPrices(req, res) {
       checkOutDate.setDate(checkInDate.getDate() + 1);
       const checkInStr = checkInDate.toISOString().slice(0, 10);
       const checkOutStr = checkOutDate.toISOString().slice(0, 10);
-      // Vérification explicite (debug)
-      // console.log(`Hotel: ${hotel.name}, checkIn: ${checkInStr}, checkOut: ${checkOutStr}`);
       const total = await getBookingTotalPrice(
         hotel.key,
         checkInStr,
