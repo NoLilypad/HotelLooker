@@ -10,14 +10,12 @@ const { getBookingTotalPrice } = require('../backend/xoteloApi');
 
 // Lecture des hôtels depuis le fichier JSON
 const HOTELS = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/hotels.json'), 'utf-8'));
-const CHECK_IN = '2025-07-02';
-const CHECK_OUT = '2025-07-03';
 
 
 // Affiche la page de login
-function showLogin(req, res, AUTH_ENABLED) {
+function showLogin(req, res, LOGIN_ENABLED) {
   // Si l'authentification est désactivée, redirige directement vers le formulaire
-  if (!AUTH_ENABLED) {
+  if (!LOGIN_ENABLED) {
     return res.redirect('/prices');
   }
   if (req.session.user) {
@@ -51,9 +49,9 @@ function showForm(req, res) {
 }
 
 // Gère la soumission du formulaire de login
-function handleLogin(req, res, USERS, AUTH_ENABLED) {
+function handleLogin(req, res, USERS, LOGIN_ENABLED) {
   // Si l'authentification est désactivée, redirige directement
-  if (!AUTH_ENABLED) {
+  if (!LOGIN_ENABLED) {
     return res.redirect('/prices');
   }
   const { username, password } = req.body;

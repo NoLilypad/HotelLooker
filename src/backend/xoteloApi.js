@@ -1,7 +1,8 @@
 // Module pour interroger l'API Xotelo et obtenir le prix total Booking.com pour un hôtel donné
 const axios = require('axios');
 
-const API_URL = 'https://data.xotelo.com/api/rates';
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+const API_URL = process.env.XOTELO_API_URL || 'https://data.xotelo.com/api/rates';
 
 /**
  * Récupère le prix total Booking.com pour un hôtel donné, des dates et un nombre de personnes

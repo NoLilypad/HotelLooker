@@ -1,11 +1,12 @@
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
+
 const dotenv = require('dotenv');
+const path = require('path');
+const envPath = path.resolve(__dirname, '../.env');
+dotenv.config({ path: envPath });
 
+const express = require('express');
+const session = require('express-session');
 const generalController = require('./controllers/generalController');
-
-dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 const PORT = 3000;
@@ -27,15 +28,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Auth config depuis .env
-const AUTH_ENABLED = String(process.env.AUTH_ENABLED).trim().toLowerCase() === 'true';
+const LOGIN_ENABLED = String(process.env.LOGIN_ENABLED || '').replace(/\r|\n/g, '').trim().toLowerCase() === 'true';
 const USERS = (process.env.USERS || '').split(',').map(u => {
   const [username, password] = u.split(':');
   return { username, password };
 });
 
+
 // Middleware de protection pour /prices
 function requireAuth(req, res, next) {
-  if (!AUTH_ENABLED || req.session.user) {
+  if (!LOGIN_ENABLED || req.session.user) {
     return next();
   }
   res.redirect('/');
@@ -44,9 +46,9 @@ function requireAuth(req, res, next) {
 
 
 // Page de login
-app.get('/', (req, res) => generalController.showLogin(req, res, AUTH_ENABLED));
+app.get('/', (req, res) => generalController.showLogin(req, res, LOGIN_ENABLED));
 // Soumission du formulaire de login
-app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS, AUTH_ENABLED));
+app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS, LOGIN_ENABLED));
 // Déconnexion
 app.get('/logout', generalController.handleLogout);
 // Formulaire de sélection de semaine et d'adultes
