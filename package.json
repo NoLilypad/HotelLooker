@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.js",
+  "bin": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "build:win": "pkg . --targets node18-win-x64 --output dist/HotelLooker-win.exe",
+    "build:linux": "pkg . --targets node18-linux-x64 --output dist/HotelLooker-linux"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,18 @@
     "node-cache": "^5.1.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "pkg": "^5.9.0"
+  },
+  "pkg": {
+    "assets": [
+      "data/hotels.json",
+      "src/public/**/*",
+      "src/views/**/*",
+      "node_modules/axios/dist/node/axios.cjs"
+    ],
+    "scripts": [
+      "src/server.js"
+    ]
   }
 }

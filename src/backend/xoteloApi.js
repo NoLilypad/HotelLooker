@@ -19,6 +19,7 @@ const priceCache = new NodeCache({ stdTTL: CACHE_TTL });
  */
 async function getBookingTotalPrice(hotelKey, checkIn, checkOut, adults, currency = 'EUR', rooms = 1) {
   const cacheKey = `${hotelKey}_${checkIn}_${checkOut}_${adults}_${currency}_${rooms}`;
+  //console.log(`Asking for ${cacheKey}`);
   const cached = priceCache.get(cacheKey);
   if (cached !== undefined) return cached;
   try {
