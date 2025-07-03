@@ -23,7 +23,7 @@
             </form>
         </div>
 
-        <!-- Right panel: hotel management -->
+        <!-- Middle panel: hotel management -->
         <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
             <h2>Hôtels suivis</h2>
             <table style="width:100%; border-collapse:collapse; font-size:0.96em;">
@@ -51,6 +51,9 @@
             </table>
 
             <h2>Add a hotel</h2>
+            <div style="text-align: center; margin-bottom: 0.7em;">
+              <a href="https://www.tripadvisor.fr/">Recherche un hôtel sur Tripadvisor</a>
+            </div>
             <form method="POST" action="/hotels/add" style="margin-bottom:2em;">
                 <label for="hotel_name">Name</label>
                 <input type="text" id="hotel_name" name="hotel_name" required>
@@ -101,6 +104,22 @@
             });
             </script>
             </form>
+        </div>
+
+        <!-- Third panel: app explanation -->
+        <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
+            <h2>À propos de l'application</h2>
+            <p>
+                Cette application vous permet de suivre les prix des hôtels sur Booking.com pour une sélection d'hôtels que vous ajoutez à la liste.<br><br>
+                <b>Fonctionnement&nbsp;:</b>
+                <ul>
+                    <li>Sélectionnez une semaine et le nombre d'adultes pour rechercher les prix disponibles.</li>
+                    <li>Ajoutez des hôtels à suivre en collant leur URL Tripadvisor (l'identifiant sera extrait automatiquement).</li>
+                    <li>Supprimez des hôtels de la liste à tout moment.</li>
+                </ul>
+                Les prix affichés sont récupérés en temps réel. <br><br>
+                Si vous rencontrer un soucis, vous pouvez contacter Rubens à l'adresse : <br> <a href="mailto:rubens.torres-lacaze@telecom-sudparis.eu">rubens.torres-lacaze@telecom-sudparis.eu</a>
+            </p>
         </div>
     </div>
 </body>
