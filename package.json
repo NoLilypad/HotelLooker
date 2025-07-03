@@ -23,7 +23,7 @@
   "dependencies": {
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
-    "dotenv": "^17.0.0",
+    "dotenv": "16.4.5",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
-    "pkg": "^5.9.0"
+    "pkg": "^5.8.1"
   },
   "pkg": {
     "assets": [

@@ -1,4 +1,3 @@
-
 const dotenv = require('dotenv');
 const path = require('path');
 const envPath = path.resolve(__dirname, '../.env');
@@ -67,7 +66,29 @@ app.post('/hotels/delete', requireAuth, hotelController.deleteHotel);
 // Affichage du tableau des prix (POST)
 app.post('/prices', requireAuth, generalController.showPrices);
 
-// Démarrage du serveur
+const PROD = process.env.PROD !== 'false'; // true par défaut
+
+// En PROD, on masque tous les prints d'erreur
+if (PROD) {
+  console.error = () => {};
+  process.on('uncaughtException', () => {});
+  process.on('unhandledRejection', () => {});
+}
+
+const asciiArt = `
+  _    _       _       _   _____      _          
+ | |  | |     | |     | | |  __ \\    (_)         
+ | |__| | ___ | |_ ___| | | |__) | __ _  ___ ___ 
+ |  __  |/ _ \\| __/ _ \\ | |  ___/ '__| |/ __/ _ \\
+ | |  | | (_) | ||  __/ | | |   | |  | | (_|  __/
+ |_|  |_|\\___/ \\__\\___|_| |_|   |_|  |_|\\___\\___|
+                                                 
+                                                 
+`;
 app.listen(PORT, () => {
-  console.log(`Serveur lancé sur http://localhost:${PORT}`);
+  if (PROD) {
+    console.log(asciiArt);
+    console.log(`Connectez-vous sur : http://localhost:${PORT}`);
+  }
 });
+
