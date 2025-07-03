@@ -4,13 +4,50 @@
     <meta charset="UTF-8">
     <title>Choose week and number of adults</title>
     <link rel="stylesheet" href="/style.css">
+    <style>
+      .spinner-overlay {
+        position: fixed;
+        top: 20px;
+        right: 30px;
+        z-index: 9999;
+        pointer-events: none;
+      }
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #1976d2;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        animation: spin 1s linear infinite;
+      }
+      .spinner-check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        font-size: 2em;
+        color: #43a047;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 4px #ccc;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
 </head>
 <body>
+    <div id="spinner-overlay" class="spinner-overlay" style="display:none;">
+      <div class="spinner" id="spinner"></div>
+      <div class="spinner-check" id="spinner-check" style="display:none;">&#10003;</div>
+    </div>
     <div style="display: flex; flex-direction: row; gap: 1em; justify-content: center; align-items: flex-start; min-height: 90vh;">
         <!-- Left panel: search/price form -->
         <div class="form-box" style="flex: 1 1 350px; min-width: 320px; max-width: 420px;">
             <h1>Recherche de prix Booking.com</h1>
-            <form method="POST" action="/prices">
+            <form method="POST" action="/prices" id="search-form">
                 <label for="start_date">Semaine</label>
                 <input type="date" id="start_date" name="start_date" value="<%= (typeof today !== 'undefined' ? today : (new Date()).toISOString().slice(0,10)) %>" required>
                 <label for="adults">Nombre d'adultes</label>
@@ -123,4 +160,41 @@
         </div>
     </div>
 </body>
+<script>
+  // Spinner logique : affichage lors de la soumission, check à la fin du chargement
+  document.addEventListener('DOMContentLoaded', function() {
+    var spinnerOverlay = document.getElementById('spinner-overlay');
+    var spinner = document.getElementById('spinner');
+    var spinnerCheck = document.getElementById('spinner-check');
+    function showSpinner() {
+      spinnerOverlay.style.display = '';
+      spinner.style.display = '';
+      spinnerCheck.style.display = 'none';
+    }
+    function showCheck() {
+      spinner.style.display = 'none';
+      spinnerCheck.style.display = '';
+      setTimeout(function() {
+        spinnerOverlay.style.display = 'none';
+      }, 900);
+    }
+    // Affiche le spinner à la soumission de n'importe quel formulaire
+    document.querySelectorAll('form').forEach(function(form) {
+      form.addEventListener('submit', function() {
+        showSpinner();
+      });
+    });
+    // Affiche le check à la fin du chargement de la page (si spinner visible)
+    window.addEventListener('pageshow', function() {
+      if (spinnerOverlay.style.display !== 'none') {
+        showCheck();
+      }
+    });
+    window.addEventListener('load', function() {
+      if (spinnerOverlay.style.display !== 'none') {
+        showCheck();
+      }
+    });
+  });
+</script>
 </html>
