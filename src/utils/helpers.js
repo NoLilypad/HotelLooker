@@ -37,4 +37,40 @@ function getParam(req, name, defaultValue) {
   return defaultValue;
 }
 
-module.exports = { getWeekDays, getParam };
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Get a writable path for hotels.json, compatible with pkg executables.
+ * If running packaged, copy the original hotels.json to a writable location (next to the executable) if needed.
+ * @returns {string} Absolute path to the writable hotels.json
+ */
+function getWritableHotelsPath() {
+  const isPkg = typeof process.pkg !== 'undefined';
+  if (isPkg) {
+    // Always use the hotels.json next to the executable in pkg mode
+    return path.join(path.dirname(process.execPath), 'hotels.json');
+  } else {
+    // In dev mode, use the source file
+    return path.join(__dirname, '../../data/hotels.json');
+  }
+}
+
+/**
+ * Ensure that the writable hotels.json exists and is initialized (for pkg mode)
+ */
+function ensureWritableHotelsJson() {
+  const isPkg = typeof process.pkg !== 'undefined';
+  if (isPkg) {
+    const execDir = path.dirname(process.execPath);
+    const writablePath = path.join(execDir, 'hotels.json');
+    if (!fs.existsSync(writablePath)) {
+      // Read from the snapshot (read-only)
+      const originalPath = path.join(__dirname, '../../data/hotels.json');
+      const data = fs.readFileSync(originalPath, 'utf-8');
+      fs.writeFileSync(writablePath, data, 'utf-8');
+    }
+  }
+}
+
+module.exports = { getWeekDays, getParam, getWritableHotelsPath, ensureWritableHotelsJson };

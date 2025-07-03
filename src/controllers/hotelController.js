@@ -2,16 +2,20 @@
 const fs = require('fs');
 const path = require('path');
 
-const HOTELS_PATH = path.join(__dirname, '../../data/hotels.json');
+
+const { getWritableHotelsPath, ensureWritableHotelsJson } = require('../utils/helpers');
+
+// Always ensure the writable hotels.json exists (especially in pkg mode)
+ensureWritableHotelsJson();
 
 // Get the list of hotels from the JSON file
 function getHotels() {
-  return JSON.parse(fs.readFileSync(HOTELS_PATH, 'utf-8'));
+  return JSON.parse(fs.readFileSync(getWritableHotelsPath(), 'utf-8'));
 }
 
 // Save the list of hotels to the JSON file
 function saveHotels(hotels) {
-  fs.writeFileSync(HOTELS_PATH, JSON.stringify(hotels, null, 2), 'utf-8');
+  fs.writeFileSync(getWritableHotelsPath(), JSON.stringify(hotels, null, 2), 'utf-8');
 }
 
 // Add a hotel to the list

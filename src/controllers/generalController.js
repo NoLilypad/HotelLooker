@@ -5,11 +5,12 @@ const path = require('path');
 
 // Use backend module to get total Booking.com price
 const { getBookingTotalPrice } = require('../backend/xoteloApi');
-const { getWeekDays, getParam } = require('../utils/helpers');
+const { getWeekDays, getParam, getWritableHotelsPath, ensureWritableHotelsJson } = require('../utils/helpers');
 
-// Utility function to dynamically read hotel list
+// Utility function to dynamically read hotel list (compatible pkg/dev)
 function getHotels() {
-  return JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/hotels.json'), 'utf-8'));
+  ensureWritableHotelsJson();
+  return JSON.parse(fs.readFileSync(getWritableHotelsPath(), 'utf-8'));
 }
 
 // Show login page

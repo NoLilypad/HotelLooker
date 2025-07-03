@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon",
-    "build:win": "pkg . --targets node18-win-x64 --output dist/HotelLooker-win.exe",
+    "build:win": "pkg . --targets node18-win-x64 --output windist/HotelLooker-win.exe",
     "build:linux": "pkg . --targets node18-linux-x64 --output dist/HotelLooker-linux"
   },
   "repository": {
