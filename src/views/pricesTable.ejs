@@ -13,9 +13,12 @@
       // Get Monday and Sunday dates for the displayed week
       const monday = days[0];
       const sunday = days[6];
-      function formatDateEn(dateStr) {
+      function formatDateSlash(dateStr) {
         const d = new Date(dateStr);
-        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
       }
     %>
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1em;">
@@ -25,7 +28,7 @@
         <button type="submit" title="Semaine précédente" style="font-size:2em; background:none; border:none; cursor:pointer; color:#1976d2;">&#8592;</button>
       </form>
       <h1 style="margin:0; font-size:1.5em; text-align:center; flex:1;">
-        Prix Booking.com du <%= formatDateEn(monday.date) %> au <%= formatDateEn(sunday.date) %>
+        Prix Booking.com du <%= formatDateSlash(monday.date) %> au <%= formatDateSlash(sunday.date) %>
       </h1>
       <form method="GET" action="/prices" style="margin:0;">
         <input type="hidden" name="start_date" value="<%= (() => { let d=new Date(monday.date); d.setDate(d.getDate()+7); return d.toISOString().slice(0,10); })() %>">
@@ -34,6 +37,17 @@
       </form>
     </div>
     <h2>Nombre d'adultes : <%= nbAdults %></h2>
+    <% 
+      // Calculer le prix minimum pour chaque colonne (jour)
+      const minPrices = days.map(function(day, colIdx) {
+        let min = null;
+        prices.forEach(function(row) {
+          const p = row.prices[colIdx];
+          if (p !== null && (min === null || p < min)) min = p;
+        });
+        return min;
+      });
+    %>
     <table>
         <thead>
             <tr>
@@ -43,7 +57,7 @@
                     const dd = String(dateObj.getDate()).padStart(2, '0');
                     const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
                     const yyyy = dateObj.getFullYear();
-                    const formattedDate = `${dd}-${mm}-${yyyy}`;
+                    const formattedDate = `${dd}/${mm}/${yyyy}`;
                 %>
                     <th>
                         <%= new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long' }).charAt(0).toUpperCase() + new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long' }).slice(1) %><br>
@@ -56,10 +70,12 @@
             <% prices.forEach(function(row) { %>
                 <tr>
                     <td><%= row.name %></td>
-                    <% row.prices.forEach(function(price) { %>
+                    <% row.prices.forEach(function(price, colIdx) { %>
                         <td>
                             <% if (price === null) { %>
                                 <span class="notfound">-</span>
+                            <% } else if (price === minPrices[colIdx]) { %>
+                                <b><%= price %> €</b>
                             <% } else { %>
                                 <%= price %> €
                             <% } %>
