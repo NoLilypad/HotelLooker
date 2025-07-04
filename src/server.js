@@ -27,32 +27,11 @@ app.set('views', path.join(__dirname, 'views'));
 // Servir les fichiers statiques (CSS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Auth config depuis .env
-const LOGIN_ENABLED = String(process.env.LOGIN_ENABLED || '').replace(/\r|\n/g, '').trim().toLowerCase() === 'true';
-const USERS = (process.env.USERS || '').split(',').map(u => {
-  const [username, password] = u.split(':');
-  return { username, password };
-});
-
-
-// Middleware de protection pour /prices
-function requireAuth(req, res, next) {
-  if (!LOGIN_ENABLED || req.session.user) {
-    return next();
-  }
-  res.redirect('/');
-}
-
-
-
-// Page de login
-app.get('/', (req, res) => generalController.showLogin(req, res, LOGIN_ENABLED));
-// Soumission du formulaire de login
-app.post('/login', (req, res) => generalController.handleLogin(req, res, USERS, LOGIN_ENABLED));
-// Déconnexion
-app.get('/logout', generalController.handleLogout);
+// Auth désactivée : accès libre à toutes les routes
+// Page d'accueil = formulaire
+app.get('/', (req, res) => generalController.showForm(req, res));
 // Affichage du tableau des prix (GET si paramètres, sinon formulaire)
-app.get('/prices', requireAuth, (req, res) => {
+app.get('/prices', (req, res) => {
   if (req.query.start_date && req.query.adults) {
     return generalController.showPrices(req, res);
   } else {
@@ -60,11 +39,11 @@ app.get('/prices', requireAuth, (req, res) => {
   }
 });
 // Ajout d'un hôtel
-app.post('/hotels/add', requireAuth, hotelController.addHotel);
+app.post('/hotels/add', hotelController.addHotel);
 // Suppression d'un hôtel
-app.post('/hotels/delete', requireAuth, hotelController.deleteHotel);
+app.post('/hotels/delete', hotelController.deleteHotel);
 // Affichage du tableau des prix (POST)
-app.post('/prices', requireAuth, generalController.showPrices);
+app.post('/prices', generalController.showPrices);
 
 const PROD = process.env.PROD !== 'false'; // true par défaut
 
@@ -85,10 +64,35 @@ const asciiArt = `
                                                  
                                                  
 `;
+
+const AUTO_OPEN = process.env.AUTO_OPEN === 'true';
+const openBrowser = () => {
+  try {
+    const url = `http://localhost:${PORT}`;
+    const { exec } = require('child_process');
+    let startCmd;
+    if (process.platform === 'win32') {
+      startCmd = `start "" "${url}"`;
+    } else if (process.platform === 'darwin') {
+      startCmd = `open "${url}"`;
+    } else {
+      startCmd = `xdg-open "${url}"`;
+    }
+    exec(startCmd, (err) => {
+      if (err && !PROD) console.error('Erreur ouverture navigateur:', err);
+    });
+  } catch (e) {
+    if (!PROD) console.error('Erreur openBrowser:', e);
+  }
+};
+
 app.listen(PORT, () => {
   if (PROD) {
     console.log(asciiArt);
     console.log(`Connectez-vous sur : http://localhost:${PORT}`);
+  }
+  if (AUTO_OPEN) {
+    openBrowser();
   }
 });
 
