@@ -7,17 +7,23 @@
     <style>
       .spinner-overlay {
         position: fixed;
-        top: 20px;
-        right: 30px;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         z-index: 9999;
         pointer-events: none;
+        background: rgba(255,255,255,0.15);
       }
       .spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #1976d2;
+        border: 4px solid #e0f2e9;
+        border-top: 4px solid #43a047;
         border-radius: 50%;
-        width: 36px;
-        height: 36px;
+        width: 48px;
+        height: 48px;
         animation: spin 1s linear infinite;
       }
       @keyframes spin {
@@ -100,9 +106,10 @@
                     const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
                     const yyyy = dateObj.getFullYear();
                     const formattedDate = `${dd}/${mm}/${yyyy}`;
+                    const weekdayFr = dateObj.toLocaleDateString('fr-FR', { weekday: 'long' });
                 %>
                     <th>
-                        <%= new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long' }).charAt(0).toUpperCase() + new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long' }).slice(1) %><br>
+                        <%= weekdayFr.charAt(0).toUpperCase() + weekdayFr.slice(1) %><br>
                         <span style="font-size:0.9em"><%= formattedDate %></span>
                     </th>
                 <% }); %>
